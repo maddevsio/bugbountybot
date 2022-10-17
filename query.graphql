@@ -1,16 +1,24 @@
 module.exports = `
-query GetReports($disclosed_at:DateTime) {
-      reports(last:100, order_by:{field:disclosed_at, direction:DESC}, where:{ disclosed_at: { _gt: $disclosed_at  }} ) {
+query GetHacktivities($disclosed_at:DateTime) {
+    hacktivity_items(
+        first: 100
+        secure_order_by: {latest_disclosable_activity_at: {_direction: DESC}}
+        where: { report: { disclosed_at: { _gt: $disclosed_at  } }}
+    ) {
         edges {
             node {
-                _id
-                id
-                title
-                disclosed_at
-                created_at
-                url
-                reporter {
-                    username
+                ... on Disclosed {
+                    report {
+                        id
+                        _id
+                        title
+                        disclosed_at
+                        created_at
+                        url
+                    }
+                    reporter {
+                        username
+                    }
                 }
             }
             cursor

@@ -37,10 +37,10 @@ class Bot {
 
     createMessage(node) {
         return `_Hacktivity_ from *${this.escapeChars(node.reporter.username)}* 
-\`\`\`text \n${this.escapeChars(node.title)}\`\`\` 
-${node.url}
-*Disclosed at:* ${this.formatDate(node.disclosed_at)}
-*Created at:* ${this.formatDate(node.created_at)}`
+\`\`\`text \n${this.escapeChars(node.report.title)}\`\`\` 
+${node.report.url}
+*Disclosed at:* ${this.formatDate(node.report.disclosed_at)}
+*Created at:* ${this.formatDate(node.report.created_at)}`
     }
 
     async go() {
@@ -60,17 +60,17 @@ ${node.url}
             return;
         }
 
-        log(`Received: ${response.data.reports.edges.length} records`);
-        response.data.reports.edges.sort(
-            (a, b) => ((a.node.disclosed_at < b.node.disclosed_at) ? -1 : ((a.node.disclosed_at > b.node.disclosed_at) ? 1 : 0))
+        log(`Received: ${response.data.hactivity_items.edges.length} records`);
+        response.data.hactivity_items.edges.sort(
+            (a, b) => ((a.node.report.disclosed_at < b.node.report.disclosed_at) ? -1 : ((a.node.report.disclosed_at > b.node.report.disclosed_at) ? 1 : 0))
         );
 
-        const reports = response.data.reports.edges.filter(r => r.node.disclosed_at !== this.lastDiscloseDate);
+        const reports = response.data.hactivity_items.edges.filter(r => r.node.report.disclosed_at !== this.lastDiscloseDate);
 
         log(`But ${reports.length ? 'found' : 'not found'} new records!`);
 
         if (reports.length > 0) {
-            this.lastDiscloseDate = reports[reports.length - 1].node.disclosed_at;
+            this.lastDiscloseDate = reports[0].node.report.disclosed_at;
             await this.firebase.put('hackerone/last_disclose_date', this.lastDiscloseDate);
         }
 

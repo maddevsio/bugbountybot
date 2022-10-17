@@ -9,7 +9,13 @@ class Querier {
         this.config = config;
     }
 
-    queryReports(variables) {
+    async queryReports(variables) {
+        const res = await fetch('https://hackerone.com/hacktivity');
+        const html = await res.text();
+        const csrfMeta = html.match(/<meta name="csrf-token" content="*[^>]*>/)[0];
+        const cookie = res.headers.get('set-cookie');
+        const csrfToken = csrfMeta.match(/content="([^"]*)/)[1];
+        
         const params = {
             query: reportsQuery,
             variables
@@ -17,7 +23,8 @@ class Querier {
         return fetch(this.config.uri, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-auth-token': '----'
+                    'cookie': cookie,
+                    'x-csrf-token': csrfToken
                 },
                 method: 'POST',
                 body: JSON.stringify(params)
