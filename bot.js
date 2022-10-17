@@ -49,8 +49,8 @@ ${node.report.url}
             this.lastDiscloseDate = await this.firebase.get('hackerone/last_disclose_date');
         }
 
-        log(`lastDiscloseDate: ${this.lastDiscloseDate}`);
-
+        log(`lastDiscloseDate 1: ${this.lastDiscloseDate}`);
+        
         const response = await this.querier.queryReports({
             disclosed_at: this.lastDiscloseDate
         });
@@ -59,13 +59,13 @@ ${node.report.url}
             log(`[WARNING] No response data: ${JSON.stringify(response)}`);
             return;
         }
-
-        log(`Received: ${response.data.hactivity_items.edges.length} records`);
-        response.data.hactivity_items.edges.sort(
+        
+        log(`Received: ${response.data.hacktivity_items.edges.length} records`);
+        response.data.hacktivity_items.edges.sort(
             (a, b) => ((a.node.report.disclosed_at < b.node.report.disclosed_at) ? -1 : ((a.node.report.disclosed_at > b.node.report.disclosed_at) ? 1 : 0))
         );
 
-        const reports = response.data.hactivity_items.edges.filter(r => r.node.report.disclosed_at !== this.lastDiscloseDate);
+        const reports = response.data.hacktivity_items.edges.filter(r => r.node.report.disclosed_at !== this.lastDiscloseDate);
 
         log(`But ${reports.length ? 'found' : 'not found'} new records!`);
 

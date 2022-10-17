@@ -20,6 +20,7 @@ class Querier {
             query: reportsQuery,
             variables
         }
+
         return fetch(this.config.uri, {
                 headers: {
                     'Content-Type': 'application/json',
