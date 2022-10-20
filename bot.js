@@ -62,12 +62,14 @@ ${node.report.url}
         
         log(`Received: ${response.data.hacktivity_items.edges.length} records`);
         response.data.hacktivity_items.edges.sort(
-            (a, b) => ((a.node.report.disclosed_at < b.node.report.disclosed_at) ? -1 : ((a.node.report.disclosed_at > b.node.report.disclosed_at) ? 1 : 0))
+            (a, b) => ((moment(a.node.report.disclosed_at) > moment(b.node.report.disclosed_at)) ? -1 : ((moment(a.node.report.disclosed_at) < moment(b.node.report.disclosed_at)) ? 1 : 0))            
         );
 
         const reports = response.data.hacktivity_items.edges.filter(r => r.node.report.disclosed_at !== this.lastDiscloseDate);
 
         log(`But ${reports.length ? 'found' : 'not found'} new records!`);
+
+        //console.log(JSON.stringify(response, null, 2))
 
         if (reports.length > 0) {
             this.lastDiscloseDate = reports[0].node.report.disclosed_at;
